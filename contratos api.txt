@@ -1,0 +1,572 @@
+0. Convenciones generales
+
+Base URL: https://api.plataforma-gr.com/api/v1
+
+Auth:
+
+Público: registro / login.
+
+Protegido: todo lo demás con Authorization: Bearer <token>.
+
+Campos comunes:
+
+id: uuid
+
+Fechas ISO8601: "2025-12-05T10:15:00Z"
+
+Moneda siempre en MXN.
+
+1. Autenticación Graduado
+1.1 Registro graduado
+
+POST /auth/graduates/register
+
+Registra al graduado y lo vincula a un evento.
+
+Body
+
+{
+  "event_id": "uuid-del-evento",
+  "full_name": "Juan Pérez",
+  "email": "juan@example.com",
+  "phone": "4441234567",
+  "career": "Ingeniería en Sistemas",
+  "generation": "2020-2024",
+  "group": "6A",
+  "password": "Secret123!"
+}
+
+
+200 OK
+
+{
+  "graduate": {
+    "id": "uuid",
+    "event_id": "uuid-del-evento",
+    "full_name": "Juan Pérez",
+    "email": "juan@example.com",
+    "phone": "4441234567",
+    "career": "Ingeniería en Sistemas",
+    "generation": "2020-2024",
+    "group": "6A",
+    "status": "pending"  // pending | active | completed | cancelled
+  },
+  "token": "jwt-token"
+}
+
+1.2 Login graduado
+
+POST /auth/graduates/login
+
+Body
+
+{
+  "email": "juan@example.com",
+  "password": "Secret123!"
+}
+
+
+200 OK
+
+{
+  "graduate": {
+    "id": "uuid",
+    "full_name": "Juan Pérez",
+    "email": "juan@example.com",
+    "status": "active"
+  },
+  "token": "jwt-token"
+}
+
+1.3 Obtener perfil
+
+GET /graduates/me
+
+Headers
+
+Authorization: Bearer <token>
+
+200 OK
+
+{
+  "id": "uuid",
+  "event_id": "uuid-del-evento",
+  "full_name": "Juan Pérez",
+  "email": "juan@example.com",
+  "phone": "4441234567",
+  "career": "Ingeniería en Sistemas",
+  "generation": "2020-2024",
+  "group": "6A",
+  "status": "active",
+  "progress": {
+    "tickets_step": "completed",
+    "layout_step": "completed",
+    "meals_step": "completed",
+    "payments_step": "in_progress",
+    "thermo_step": "locked"
+  }
+}
+
+2. Dashboard / Progreso del graduado
+2.1 Dashboard del graduado
+
+GET /graduates/me/dashboard
+
+200 OK
+
+{
+  "graduate": {
+    "id": "uuid",
+    "full_name": "Juan Pérez",
+    "status": "active"
+  },
+  "event": {
+    "id": "uuid-del-evento",
+    "name": "Graduación Arquitectura 2025",
+    "date": "2025-06-30",
+    "venue": "Salón Las Palmas"
+  },
+  "steps": [
+    { "key": "tickets", "label": "Boletos", "status": "completed" },
+    { "key": "layout", "label": "Mesa", "status": "completed" },
+    { "key": "meals", "label": "Platillos", "status": "completed" },
+    { "key": "payments", "label": "Pagos", "status": "in_progress" },
+    { "key": "thermo", "label": "Termo", "status": "locked" },
+    { "key": "summary", "label": "Resumen", "status": "available" }
+  ],
+  "payment_progress": {
+    "total_amount": 15000,
+    "paid_amount": 9000,
+    "pending_amount": 6000,
+    "progress_percent": 60
+  },
+  "thermo": {
+    "unlocked": false,
+    "required_percent": 70,
+    "status": "locked" // locked | unlocked | requested
+  }
+}
+
+3. Boletos e invitados
+3.1 Definir cantidad de boletos
+
+POST /graduates/me/tickets
+
+Primera definición o actualización de la cantidad de boletos.
+
+Body
+
+{
+  "tickets_count": 6
+}
+
+
+200 OK
+
+{
+  "tickets_count": 6,
+  "base_price_per_ticket": 1500,
+  "total_amount": 9000,
+  "payment_plan": {
+    "months": 6,
+    "initial_payment": 1500,
+    "monthly_payment": 1250
+  }
+}
+
+3.2 Listar boletos / invitados
+
+GET /graduates/me/guests
+
+200 OK
+
+{
+  "tickets_count": 6,
+  "guests": [
+    {
+      "id": "uuid-guest-1",
+      "type": "graduate", // graduate | guest
+      "full_name": "Juan Pérez",
+      "seat_number": "M15-01",
+      "meal_type": "traditional" // traditional | vegan
+    },
+    {
+      "id": "uuid-guest-2",
+      "type": "guest",
+      "full_name": "Invitado 1",
+      "seat_number": "M15-02",
+      "meal_type": "vegan"
+    }
+  ]
+}
+
+3.3 Agregar invitados adicionales
+
+POST /graduates/me/guests
+
+Agrega nuevos invitados (boletos adicionales) con cálculo de retroactivos.
+
+Body
+
+{
+  "new_guests": [
+    { "full_name": "Invitado 3" },
+    { "full_name": "Invitado 4" }
+  ]
+}
+
+
+200 OK
+
+{
+  "added_guests": [
+    {
+      "id": "uuid-guest-3",
+      "full_name": "Invitado 3"
+    },
+    {
+      "id": "uuid-guest-4",
+      "full_name": "Invitado 4"
+    }
+  ],
+  "financial_impact": {
+    "new_tickets_count": 2,
+    "extra_total_amount": 3000,
+    "retroactive_months": 3,
+    "retroactive_amount": 1500,
+    "updated_total_amount": 13500,
+    "updated_monthly_payment": 1800
+  }
+}
+
+3.4 Editar datos de invitado
+
+PATCH /graduates/me/guests/{guestId}
+
+Body
+
+{
+  "full_name": "Invitado Actualizado"
+}
+
+
+200 OK
+
+{
+  "id": "uuid-guest-2",
+  "full_name": "Invitado Actualizado",
+  "meal_type": "traditional"
+}
+
+4. Croquis / Mesa
+4.1 Obtener croquis del evento (vista graduado)
+
+GET /events/{eventId}/layout/overview
+
+Devuelve el croquis simplificado para el graduado.
+
+200 OK
+
+{
+  "event_id": "uuid-del-evento",
+  "layout_version": 3,
+  "tables": [
+    {
+      "id": "tbl-15",
+      "label": "Mesa 15",
+      "capacity": 10,
+      "occupied": 8,
+      "status": "available"  // available | full | blocked
+    },
+    {
+      "id": "tbl-16",
+      "label": "Mesa 16",
+      "capacity": 10,
+      "occupied": 10,
+      "status": "full"
+    }
+  ],
+  "graduate_selection": {
+    "table_id": "tbl-15",
+    "table_label": "Mesa 15"
+  }
+}
+
+4.2 Seleccionar / cambiar mesa
+
+POST /graduates/me/layout/selection
+
+Body
+
+{
+  "table_id": "tbl-15"
+}
+
+
+200 OK
+
+{
+  "table_id": "tbl-15",
+  "table_label": "Mesa 15",
+  "status": "assigned"
+}
+
+
+409 Conflict (si se llenó en el proceso)
+
+{
+  "error": "TABLE_FULL",
+  "message": "La mesa seleccionada ya no tiene lugares disponibles."
+}
+
+5. Platillos
+5.1 Obtener platillos del graduado e invitados
+
+GET /graduates/me/meals
+
+200 OK
+
+{
+  "deadline": "2025-05-20T23:59:59Z",
+  "guests": [
+    {
+      "guest_id": "uuid-guest-1",
+      "full_name": "Juan Pérez",
+      "meal_type": "traditional"
+    },
+    {
+      "guest_id": "uuid-guest-2",
+      "full_name": "Invitado 1",
+      "meal_type": "vegan"
+    }
+  ],
+  "summary": {
+    "traditional_count": 5,
+    "vegan_count": 1
+  }
+}
+
+5.2 Actualizar platillo de un invitado
+
+PATCH /graduates/me/meals/{guestId}
+
+Body
+
+{
+  "meal_type": "vegan"
+}
+
+
+200 OK
+
+{
+  "guest_id": "uuid-guest-2",
+  "full_name": "Invitado 1",
+  "meal_type": "vegan"
+}
+
+
+422 si ya pasó deadline
+
+{
+  "error": "MEALS_LOCKED",
+  "message": "Ya no es posible modificar los platillos."
+}
+
+6. Pagos con OpenPay
+
+Lado servidor internamente habla con OpenPay. Front solo llama a estos endpoints.
+
+6.1 Obtener resumen financiero
+
+GET /graduates/me/payments/summary
+
+200 OK
+
+{
+  "total_amount": 15000,
+  "paid_amount": 9000,
+  "pending_amount": 6000,
+  "progress_percent": 60,
+  "payment_plan": {
+    "initial_payment": 3000,
+    "monthly_payment": 1500,
+    "months_total": 7,
+    "months_paid": 4,
+    "next_due_date": "2025-01-10"
+  }
+}
+
+6.2 Historial de pagos
+
+GET /graduates/me/payments/history
+
+200 OK
+
+{
+  "payments": [
+    {
+      "id": "pay-001",
+      "date": "2024-12-10T15:00:00Z",
+      "amount": 3000,
+      "type": "initial",   // initial | monthly | extra | retroactive
+      "status": "paid"
+    },
+    {
+      "id": "pay-002",
+      "date": "2025-01-10T15:00:00Z",
+      "amount": 1500,
+      "type": "monthly",
+      "status": "paid"
+    }
+  ]
+}
+
+6.3 Crear intento de pago (checkout)
+
+POST /graduates/me/payments/intents
+
+Crea un intento de pago para el monto que corresponda (ej. mensualidad pendiente o monto específico).
+
+Body
+
+{
+  "purpose": "monthly_payment", // monthly_payment | retroactive | extra
+  "amount": 1500
+}
+
+
+200 OK
+
+{
+  "payment_intent_id": "pi_123",
+  "provider": "openpay",
+  "amount": 1500,
+  "currency": "MXN",
+  "checkout_url": "https://sandbox-openpay.com/checkout/xyz",
+  "expires_at": "2025-01-10T16:00:00Z"
+}
+
+
+El front redirige a checkout_url.
+El webhook de OpenPay actualiza el registro cuando se paga.
+
+6.4 Webhook de OpenPay (lado servidor, sin auth JWT)
+
+POST /webhooks/openpay/payments
+
+Este endpoint es solo para el proveedor, pero lo dejo en el contrato.
+
+Body (ejemplo simplificado)
+
+{
+  "transaction_id": "tr_123",
+  "status": "completed",
+  "amount": 1500,
+  "order_id": "pi_123",
+  "operation_date": "2025-01-10T15:05:00Z"
+}
+
+
+200 OK
+
+{ "ok": true }
+
+7. Termo personalizado
+7.1 Estado del termo
+
+GET /graduates/me/thermo
+
+200 OK
+
+{
+  "unlocked": true,
+  "required_percent": 70,
+  "current_progress_percent": 75,
+  "status": "unlocked", // locked | unlocked | requested
+  "data": {
+    "prefix": "Ing.",
+    "name": "Juan",
+    "requested_at": "2025-03-01T12:00:00Z"
+  }
+}
+
+7.2 Solicitar termo (crear o actualizar datos)
+
+POST /graduates/me/thermo
+
+Body
+
+{
+  "prefix": "Ing.",
+  "name": "Juan"
+}
+
+
+200 OK
+
+{
+  "status": "requested",
+  "prefix": "Ing.",
+  "name": "Juan",
+  "requested_at": "2025-03-01T12:00:00Z"
+}
+
+
+422 si no cumple porcentaje
+
+{
+  "error": "THERMO_LOCKED",
+  "message": "Aún no alcanzas el porcentaje requerido para solicitar el termo."
+}
+
+8. Resumen del evento para el graduado
+8.1 Resumen consolidado
+
+GET /graduates/me/summary
+
+200 OK
+
+{
+  "graduate": {
+    "id": "uuid",
+    "full_name": "Juan Pérez",
+    "career": "Ingeniería en Sistemas",
+    "generation": "2020-2024"
+  },
+  "event": {
+    "id": "uuid-event",
+    "name": "Graduación Arquitectura 2025",
+    "date": "2025-06-30",
+    "venue": "Salón Las Palmas"
+  },
+  "tickets": {
+    "tickets_count": 6,
+    "guests": [
+      {
+        "id": "uuid-guest-1",
+        "full_name": "Juan Pérez",
+        "type": "graduate",
+        "meal_type": "traditional"
+      }
+    ]
+  },
+  "layout": {
+    "table_id": "tbl-15",
+    "table_label": "Mesa 15"
+  },
+  "meals_summary": {
+    "traditional_count": 5,
+    "vegan_count": 1
+  },
+  "payments": {
+    "total_amount": 15000,
+    "paid_amount": 9000,
+    "pending_amount": 6000,
+    "progress_percent": 60
+  },
+  "thermo": {
+    "unlocked": false,
+    "status": "locked"
+  }
+}

@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Evento de graduación
+model Event {
+  id                String      @id @default(uuid())
+  name              String
+  date              DateTime
+  venue             String
+  capacity          Int
+  ticket_price      Decimal     @db.Decimal(10, 2)
+  months_duration   Int         @default(6)
+  initial_payment   Decimal     @db.Decimal(10, 2)
+  thermo_threshold  Int         @default(70) // Porcentaje para desbloquear termo
+  meals_deadline    DateTime
+  layout_version    Int         @default(1)
+  status            String      @default("active") // active | completed | cancelled
+  
+  graduates         Graduate[]
+  tables            Table[]
+  
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+}
+
+// Graduado
+model Graduate {
+  id                String      @id @default(uuid())
+  event_id          String
+  full_name         String
+  email             String      @unique
+  phone             String
+  career            String
+  generation        String
+  group             String?
+  password_hash     String
+  status            String      @default("pending") // pending | active | completed | cancelled
+  
+  // Progreso del wizard
+  tickets_step      String      @default("pending") // pending | completed
+  layout_step       String      @default("pending")
+  meals_step        String      @default("pending")
+  payments_step     String      @default("pending")
+  thermo_step       String      @default("locked") // locked | unlocked | completed
+  
+  // Termo personalizado
+  thermo_prefix     String?
+  thermo_name       String?
+  
+  event             Event       @relation(fields: [event_id], references: [id])
+  tickets           Ticket[]
+  guests            Guest[]
+  payments          Payment[]
+  thermo            Thermo?
+  table_selection   TableSelection?
+  
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  
+  @@index([event_id])
+  @@index([email])
+}
+
+// Mesa del croquis
+model Table {
+  id                String      @id @default(uuid())
+  event_id          String
+  label             String      // "Mesa 15"
+  capacity          Int         @default(10)
+  position_x        Float       // Coordenadas para el croquis
+  position_y        Float
+  status            String      @default("available") // available | full | blocked
+  
+  event             Event       @relation(fields: [event_id], references: [id])
+  selections        TableSelection[]
+  
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  
+  @@unique([event_id, label])
+  @@index([event_id])
+}
+
+// Selección de mesa por graduado
+model TableSelection {
+  id                String      @id @default(uuid())
+  graduate_id       String      @unique
+  table_id          String
+  selected_at       DateTime    @default(now())
+  
+  graduate          Graduate    @relation(fields: [graduate_id], references: [id])
+  table             Table       @relation(fields: [table_id], references: [id])
+  
+  @@index([table_id])
+}
+
+// Boleto (paquete inicial del graduado)
+model Ticket {
+  id                String      @id @default(uuid())
+  graduate_id       String
+  tickets_count     Int
+  base_price        Decimal     @db.Decimal(10, 2)
+  total_amount      Decimal     @db.Decimal(10, 2)
+  
+  graduate          Graduate    @relation(fields: [graduate_id], references: [id])
+  
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  
+  @@index([graduate_id])
+}
+
+// Invitado (incluye al graduado mismo)
+model Guest {
+  id                String      @id @default(uuid())
+  graduate_id       String
+  type              String      // "graduate" | "guest"
+  full_name         String
+  seat_number       String?     // "M15-01"
+  meal_type         String      @default("traditional") // traditional | vegan
+  added_at          DateTime    @default(now())
+  
+  graduate          Graduate    @relation(fields: [graduate_id], references: [id])
+  
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  
+  @@index([graduate_id])
+}
+
+// Pago
+model Payment {
+  id                String      @id @default(uuid())
+  graduate_id       String
+  amount            Decimal     @db.Decimal(10, 2)
+  type              String      // initial | monthly | extra | retroactive
+  status            String      @default("pending") // pending | paid | failed
+  payment_date      DateTime?
+  openpay_tx_id     String?     @unique
+  month_number      Int?        // Para pagos mensuales
+  
+  graduate          Graduate    @relation(fields: [graduate_id], references: [id])
+  
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  
+  @@index([graduate_id])
+  @@index([status])
+}
+
+// Termo personalizado
+model Thermo {
+  id                String      @id @default(uuid())
+  graduate_id       String      @unique
+  prefix            String      // Lic. | Ing. | Arq. | Mtro.
+  name              String      // Máx 14 caracteres
+  status            String      @default("requested") // requested | produced | delivered
+  requested_at      DateTime    @default(now())
+  
+  graduate          Graduate    @relation(fields: [graduate_id], references: [id])
+  
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+}

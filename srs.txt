@@ -1,0 +1,172 @@
+📄 SRS – Plataforma GR (Módulo del Graduado)
+
+Versión para Canva – Copiar y Pegar
+
+1. Introducción
+1.1 Propósito del documento
+
+Este documento especifica los requerimientos funcionales, no funcionales y reglas de negocio del Módulo del Graduado dentro de la Plataforma GR, enfocada en la gestión financiera, logística y administrativa de eventos de graduación.
+
+1.2 Alcance
+
+El módulo del Graduado cubre:
+
+Registro inicial del graduado
+
+Selección de boletos
+
+Selección de mesa mediante croquis interactivo
+
+Selección de platillos (vegano/tradicional)
+
+Gestión de pagos mensuales mediante OpenPay
+
+Agregar invitados adicionales
+
+Seguimiento de avances y beneficios desbloqueables (termo personalizado)
+
+Consulta del estatus general del evento
+
+No incluye reglas de cancelación ni políticas de reembolso (pendientes del cliente).
+
+2. Descripción general del sistema
+2.1 Usuarios implicados
+
+Graduado
+Persona que participa en un evento de graduación y realiza pagos periódicos para completar su paquete.
+
+2.2 Funciones clave
+
+Crear cuenta y completar formulario inicial
+
+Elegir número de boletos
+
+Seleccionar mesa
+
+Ver disponibilidad en tiempo real
+
+Realizar pagos (enganche + mensualidades)
+
+Revisar historial financiero
+
+Modificar invitados/platillos
+
+Solicitar termo al cumplir meta de pago
+
+3. Requerimientos funcionales
+3.1 Registro del graduado
+
+RF-01: El graduado puede registrarse proporcionando nombre, teléfono, email, carrera y generación.
+
+RF-02: El sistema valida el email y teléfono.
+
+RF-03: Al registrarse, el sistema crea un perfil vinculado al evento seleccionado.
+
+3.2 Selección de boletos
+
+RF-04: El graduado puede seleccionar su cantidad inicial de boletos.
+
+RF-05: El sistema valida disponibilidad de boletos según capacidad del evento.
+
+RF-06: El sistema muestra el costo total y el costo mensual.
+
+3.3 Selección de mesa mediante croquis
+
+RF-07: El graduado visualiza el croquis del evento con mesas disponibles y ocupadas.
+
+RF-08: Puede seleccionar una mesa mientras esté disponible.
+
+RF-09: Puede cambiar de mesa si la nueva mesa está libre.
+
+3.4 Pagos mediante OpenPay
+
+RF-10: El graduado debe realizar un pago inicial para activar su cuenta.
+
+RF-11: El sistema calcula mensualidades restantes automáticamente.
+
+RF-12: El graduado puede consultar su historial de pagos.
+
+RF-13: Los pagos se registran por mes y se reflejan en cortes financieros administrativos.
+
+3.5 Invitados adicionales
+
+RF-14: El graduado puede agregar nuevos invitados en cualquier momento.
+
+RF-15: El sistema calcula retroactivos de meses pasados.
+
+RF-16: Los nuevos boletos se agregan al plan de pagos total.
+
+3.6 Selección de platillos
+
+RF-17: El graduado puede seleccionar platillo tradicional o vegano para él y cada invitado.
+
+RF-18: Puede modificar la selección antes del cierre de cocina del evento.
+
+3.7 Termo personalizado (beneficio desbloqueable)
+
+RF-19: Cuando el graduado alcanza un porcentaje configurado por el administrador (70–80%), se desbloquea la opción del termo.
+
+RF-20: El graduado personaliza su termo seleccionando prefijo (Lic., Ing., Arq.) y nombre de máximo 14 letras.
+
+RF-21: El sistema registra todos los termos solicitados para reportes internos.
+
+3.8 Resumen del evento
+
+RF-22: El graduado puede visualizar su información consolidada:
+
+Mesa
+
+Invitados
+
+Pagos
+
+Platillos
+
+Progreso del plan
+
+Estatus del termo
+
+4. Requerimientos no funcionales
+4.1 Usabilidad
+
+El proceso debe ser intuitivo.
+
+El croquis debe ser interactivo y claro en dispositivos móviles.
+
+4.2 Seguridad
+
+Todos los pagos deben procesarse mediante OpenPay.
+
+Datos financieros deben guardarse cifrados.
+
+4.3 Rendimiento
+
+Actualización del croquis en tiempo real.
+
+Respuesta de pago en < 3 segundos dependiendo de OpenPay.
+
+5. Reglas de negocio
+
+RN-01: El invitado adicional debe pagar retroactivos.
+
+RN-02: El termo es uno por graduado.
+
+RN-03: La longitud del nombre del termo no debe superar 14 letras.
+
+RN-04: Cancelaciones y reembolsos están pendientes.
+
+6. Restricciones
+
+Depende de OpenPay para operaciones financieras.
+
+El croquis utiliza un sistema drag-and-drop previamente existente.
+
+Las reglas de cancelación están pendientes del cliente.
+
+7. Anexos
+
+Croquis base de 100 mesas (editable por administración).
+
+Campos del reporte de platillos.
+
+Campos del reporte de termos.

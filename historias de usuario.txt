@@ -1,0 +1,231 @@
+🎓 HISTORIAS DE USUARIO – MÓDULO DEL GRADUADO (Plataforma GR)
+
+(Versión completa y final)
+
+HU-001 – Registro del graduado
+
+Como graduado
+quiero registrarme proporcionando mis datos básicos
+para iniciar mi proceso de participación en la graduación.
+
+Criterios de aceptación
+Dado que soy un graduado nuevo  
+Cuando ingreso nombre, teléfono, email, carrera y generación  
+Entonces el sistema valida los datos  
+Y crea mi perfil vinculado al evento.
+
+HU-002 – Inicio de sesión del graduado
+
+Como graduado
+quiero acceder con mi cuenta
+para continuar con mi proceso de selección y pagos.
+
+Criterios de aceptación
+Dado que ya tengo una cuenta  
+Cuando ingreso mi email y contraseña  
+Entonces puedo acceder a mi panel.
+
+HU-003 – Ver panel inicial de progreso
+
+Como graduado
+quiero ver un panel con los pasos necesarios
+para saber qué me falta completar.
+
+Criterios de aceptación
+Dado que he iniciado sesión  
+Cuando veo el dashboard  
+Entonces visualizo el wizard con pasos pendientes, completados o bloqueados.
+
+HU-004 – Seleccionar cantidad de boletos
+
+Como graduado
+quiero elegir cuántos boletos necesito
+para saber el costo total y mensual.
+
+Criterios de aceptación
+Dado que estoy en el paso de selección de boletos  
+Cuando elijo un número de boletos  
+Entonces veo el precio total  
+Y veo el plan de pagos estimado.
+
+HU-005 – Seleccionar mesa en el croquis
+
+Como graduado
+quiero elegir mi mesa desde un croquis interactivo
+para asegurar mi lugar en el salón.
+
+Criterios de aceptación
+Dado que estoy en el croquis  
+Cuando selecciono una mesa disponible  
+Entonces el sistema la asigna a mi perfil  
+Y marca la mesa como ocupada en tiempo real.
+
+HU-006 – Cambiar de mesa
+
+Como graduado
+quiero poder cambiar mi mesa si encuentro una mejor
+para organizarme con mis invitados.
+
+Criterios de aceptación
+Dado que ya tengo una mesa asignada  
+Cuando selecciono otra mesa disponible  
+Entonces el sistema me pide confirmación  
+Y actualiza mi mesa al confirmar.
+
+HU-007 – Seleccionar platillos (tradicional/vegano)
+
+Como graduado
+quiero elegir los platillos para mí y mis invitados
+para asignar correctamente los alimentos del evento.
+
+Criterios de aceptación
+Dado que tengo boletos asignados  
+Cuando selecciono platillo tradicional o vegano para cada invitado  
+Entonces el sistema guarda mis elecciones.
+
+HU-008 – Realizar pago inicial
+
+Como graduado
+quiero efectuar mi pago inicial
+para activar mi participación en el evento.
+
+Criterios de aceptación
+Dado que estoy en el paso de pagos  
+Cuando realizo mi pago inicial mediante OpenPay  
+Entonces el sistema registra el pago  
+Y activa mi cuenta.
+
+HU-009 – Consultar historial de pagos
+
+Como graduado
+quiero ver mis pagos realizados y pendientes
+para mantener control de mi avance financiero.
+
+Criterios de aceptación
+Dado que estoy en el panel financiero  
+Cuando veo mi historial  
+Entonces observo pagos realizados, pendientes y porcentaje completado.
+
+HU-010 – Pagar mensualidades
+
+Como graduado
+quiero pagar mis mensualidades desde la plataforma
+para avanzar a tiempo según mi plan.
+
+Criterios de aceptación
+Dado que tengo pagos pendientes  
+Cuando selecciono pagar mensualidad  
+Entonces el sistema abre OpenPay  
+Y registra el pago al completarse.
+
+HU-011 – Agregar invitados adicionales
+
+Como graduado
+quiero agregar invitados después de mi compra inicial
+para ampliar mi grupo.
+
+Criterios de aceptación
+Dado que ya tengo boletos asignados  
+Cuando agrego invitados nuevos  
+Entonces el sistema calcula retroactivos  
+Y actualiza el plan de pagos total.
+
+HU-012 – Ver retroactivos de invitados nuevos
+
+Como graduado
+quiero ver cuánto debo pagar por meses atrasados al agregar invitados
+para tomar una decisión informada.
+
+Criterios de aceptación
+Dado que agrego invitados  
+Cuando el sistema detecta meses ya transcurridos  
+Entonces muestra el monto retroactivo  
+Antes de confirmar.
+
+HU-013 – Desbloquear termo personalizado
+
+Como graduado
+quiero desbloquear el beneficio del termo al llegar a cierto porcentaje
+para recibir mi recompensa.
+
+Criterios de aceptación
+Dado que tengo pagos registrados  
+Cuando alcanzo el porcentaje configurado (ej. 70%)  
+Entonces el sistema desbloquea la opción del termo.
+
+HU-014 – Personalizar termo
+
+Como graduado
+quiero personalizar mi termo con prefijo y nombre
+para recibirlo correctamente.
+
+Criterios de aceptación
+Dado que el termo está desbloqueado  
+Cuando selecciono un prefijo y escribo un nombre ≤ 14 caracteres  
+Entonces el sistema registra mi termo personalizado.
+
+HU-015 – Ver resumen del evento
+
+Como graduado
+quiero ver un resumen completo de mi participación
+para verificar que todo esté correcto.
+
+Criterios de aceptación
+Dado que completé varios pasos  
+Cuando entro al resumen  
+Entonces veo: mesa, invitados, platillos, pagos y termo.
+
+HU-016 – Recibir notificaciones
+
+Como graduado
+quiero recibir notificaciones sobre pagos, mesa y beneficios
+para mantenerme al tanto del proceso.
+
+Criterios de aceptación
+Dado que estoy registrado  
+Cuando ocurren eventos relevantes  
+Entonces recibo notificaciones por SMS/Email/Panel.
+
+HU-017 – Editar platillos
+
+Como graduado
+quiero modificar la selección de platillos antes del cierre
+para ajustar las preferencias de mis invitados.
+
+Criterios de aceptación
+Dado que no ha pasado la fecha límite  
+Cuando edito mis platillos  
+Entonces el sistema actualiza los datos sin restricciones.
+
+HU-018 – Editar invitados
+
+Como graduado
+quiero actualizar nombres o datos de mis invitados
+para mantener la lista correcta.
+
+Criterios de aceptación
+Dado que tengo invitados registrados  
+Cuando edito sus datos  
+Entonces el sistema actualiza la información.
+
+HU-019 – Ver estado del termo
+
+Como graduado
+quiero ver si ya solicité mi termo o si sigue pendiente
+para dar seguimiento a mi beneficio.
+
+Criterios de aceptación
+Dado que completé mi solicitud de termo  
+Cuando entro al panel  
+Entonces veo el estado: Pendiente / Desbloqueado / Solicitado.
+
+HU-020 – Ver tabla de mensualidades
+
+Como graduado
+quiero ver una tabla con montos mensuales futuros
+para planear mis pagos.
+
+Criterios de aceptación
+Dado que tengo un plan activo  
+Cuando abro la vista de mensualidades  
+Entonces veo fechas, montos y status.

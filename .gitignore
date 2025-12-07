@@ -1,0 +1,77 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment Variables - CRITICAL: Never commit these!
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!.env.example
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.loadpath
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Prisma
+backend/prisma/migrations/*/migration.sql
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Scripts personalizados (pueden contener credenciales)
+reset-tickets.ps1
+debug-auth.ps1
+reset-tickets.js
+
+# Artifacts de Gemini (tu asistente)
+.gemini/
+
+# Documentos de prueba con credenciales
+OPENPAY_DIAGNOSTICO.md
+USUARIO_PRUEBA.md

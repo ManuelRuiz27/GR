@@ -1,0 +1,299 @@
+🎓 FLUJO UX/UI DEL GRADUADO – PLATAFORMA GR
+
+(Versión definitiva basada en los requerimientos confirmados)
+
+0. Landing / Acceso Inicial
+Elementos:
+
+Logo del evento / GR Producciones
+
+Botón "Crear cuenta"
+
+Botón "Ya tengo cuenta"
+
+Acciones:
+
+Graduado elige si es registro nuevo o si continúa su proceso.
+
+1. Registro del Graduado
+Pantalla: Formulario de Registro
+
+Campos:
+
+Nombre completo
+
+Teléfono
+
+Email
+
+Carrera
+
+Generación
+
+Grupo (si aplica)
+
+Botón "Continuar"
+
+UX:
+
+Validaciones en tiempo real (email, teléfono).
+
+Copy amable: “Unos datos más para comenzar tu proceso”.
+
+Resultado:
+
+Crea su perfil → pasa al inicio del proceso.
+
+2. Dashboard Inicial del Graduado
+Vista general tipo “wizard” con pasos:
+
+Selecciona tus boletos
+
+Elige tu mesa
+
+Personaliza tus platillos
+
+Realiza tus pagos
+
+Desbloquea tu termo
+
+Resumen del evento
+
+Estado visual:
+
+Cada paso tiene un check, pendiente o bloqueado.
+
+El primer paso está abierto, los demás bloqueados.
+
+3. Selección de Boletos
+Pantalla: ¿Cuántos boletos necesitas?
+
+Elementos:
+
+Selector + / – para número de boletos
+
+Precio unitario
+
+Costo total
+
+Plan de pagos mensual desglosado
+
+Botón "Continuar"
+
+UX:
+
+Mostrar barra de avance con meses proyectados.
+
+Mostrar “puedes agregar invitados después”.
+
+4. Selección de Mesa – Croquis Interactivo
+Pantalla: Elige tu mesa
+
+Elementos UI:
+
+Croquis general del salón:
+
+Mesas disponibles → verde
+
+Mesas ocupadas → rojo
+
+Mesas seleccionadas → azul
+
+Pista / DJ / baños / salidas → íconos grises
+
+Tooltip al tocar una mesa:
+
+Número de mesa
+
+Capacidad
+
+Lugares disponibles
+
+Acciones:
+
+Tocar una mesa → Confirmar selección
+
+Si cambia mesa → mensaje “¿Deseas cambiarte de mesa?”
+
+UX:
+
+Vista móvil panorámica con smooth panning y zoom.
+
+Vista desktop con drag diagonal.
+
+5. Selección de Platillos
+Pantalla: Personaliza tus platillos
+
+Vista tipo lista:
+
+Para cada boleto:
+
+Invitado 1 → Tradicional / Vegano
+
+Invitado 2 → Tradicional / Vegano
+
+Invitado 3 → Tradicional / Vegano
+
+Graduado → Tradicional / Vegano
+
+UX:
+
+Animación de cambio de opción.
+
+Mostrar conteo total: “Tradicional: 5 / Vegano: 2”.
+
+6. Pagos – Enganche + Mensualidades
+Pantalla: Tu plan de pagos
+
+Elementos:
+
+Monto del enganche
+
+Monto mensual
+
+Línea de tiempo de pagos
+
+Botón "Pagar ahora" (OpenPay)
+
+Al presionar:
+
+Se abre ventana segura con OpenPay.
+
+Al pagar → regresa al dashboard.
+
+Dashboard financiero:
+
+Tarjeta con porcentaje de avance
+
+Lista de pagos realizados
+
+Lista de pagos pendientes
+
+Fechas de corte
+
+Aviso si tiene retroactivos por invitados nuevos
+
+UX:
+
+Mostrar hilo: “A tiempo”, “Retrasado”, “Pagado”.
+
+7. Invitados adicionales (opcional en cualquier momento)
+Pantalla: Agregar invitados
+
+Pasos:
+
+Seleccionar cuántos nuevos invitados
+
+Sistema calcula retroactivos
+
+Mostrar total actualizado del plan
+
+Confirmar
+
+UX:
+
+Banner: “Los invitados nuevos deben pagar meses anteriores”.
+
+8. Termo Personalizado (cuando se desbloquea)
+
+El termo se desbloquea automáticamente al alcanzar el % definido por el administrador.
+
+Pantalla: Personaliza tu termo
+
+Campos:
+
+Prefijo: Lic. / Ing. / Arq. / Mtro.
+
+Nombre (máx. 14 letras)
+
+Vista previa del termo (mockup)
+
+Botón:
+
+"Solicitar termo"
+
+UX:
+
+Animación de desbloqueo: luz dorada / estrellitas
+
+Mostrar progreso: “Has completado el 80% de tu plan”.
+
+9. Resumen General del Graduado
+
+Pantalla tipo tarjeta consolidada:
+
+Secciones:
+
+Mesa seleccionada
+
+Número de mesa
+
+Mapa en miniatura
+
+Invitados
+
+Lista con boletos y platillos
+
+Pagos
+
+Porcentaje completado
+
+Pagos hechos / pendientes
+
+Fechas de corte
+
+Termo
+
+Estado: “Pendiente / Desbloqueado / Solicitado”
+
+Botones:
+
+Editar mesa
+
+Agregar invitados
+
+Ver historial de pagos
+
+10. Notificaciones
+
+El graduado recibe notificaciones vía:
+
+SMS (previo a WhatsApp)
+
+Email
+
+Panel interno
+
+Mensajes clave:
+
+Recordatorios de pago
+
+Confirmación de mesa
+
+Confirmación de platillos
+
+Desbloqueo del termo
+
+Cambios administrativos
+
+MAPA GENERAL DEL FLUJO (RESUMIDO)
+
+Landing
+
+Registro
+
+Dashboard inicial
+
+Selección de boletos
+
+Croquis interactivo
+
+Platillos
+
+Pagos (enganche → mensualidades)
+
+Invitados adicionales (opcional)
+
+Termo personalizado (al desbloquear)
+
+Resumen final
