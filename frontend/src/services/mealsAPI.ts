@@ -2,10 +2,10 @@ import api from './api';
 
 export const mealsAPI = {
     getMeals: () => {
-        return api.get('/meals');
+        return api.get('/graduates/me/meals');
     },
 
-    assignMeals: (assignments: Array<{ guest_id: string; meal_option_id: string }>) => {
-        return api.post('/meals/assign', { assignments });
+    updateMeal: (guestId: string, mealType: string) => {
+        return api.patch(`/graduates/me/meals/${guestId}`, { meal_type: mealType });
     },
 };

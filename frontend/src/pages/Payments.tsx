@@ -139,7 +139,7 @@ const Payments: React.FC = () => {
                 },
                 async (response: any) => {
                     try {
-                        const result = await paymentsAPI.createCharge({
+                        await paymentsAPI.createCharge({
                             payment_method: 'card',
                             token: response.data.id,
                             payment_type: paymentType,

@@ -27,17 +27,17 @@ const Layout: React.FC = () => {
     const loadLayout = async () => {
         try {
             setLoading(true);
-            const [layoutResp, selectionResp] = await Promise.all([
-                layoutAPI.getLayout('event-id'),
-                layoutAPI.getMySelection(),
-            ]);
+            const layoutResp = await layoutAPI.getLayout();
 
-            setTables(layoutResp.data.tables || []);
-            setMySelection(selectionResp.data);
+            const layoutData = layoutResp.data;
+            const tablesData: Table[] = layoutData.tables || [];
 
-            if (selectionResp.data.table) {
-                const currentTable = layoutResp.data.tables.find(
-                    (t: Table) => t.id === selectionResp.data.table.id
+            setTables(tablesData);
+            setMySelection(layoutData.my_selection);
+
+            if (layoutData.my_selection) {
+                const currentTable = tablesData.find(
+                    (t: Table) => t.id === layoutData.my_selection.table_id
                 );
                 if (currentTable) {
                     setSelectedTable(currentTable);
@@ -51,7 +51,7 @@ const Layout: React.FC = () => {
     };
 
     const handleTableSelect = async (table: Table) => {
-        if (table.status === 'occupied' && table.id !== mySelection?.table?.id) {
+        if ((table.status === 'full' || table.status === 'blocked') && table.id !== mySelection?.table_id) {
             setError('Esta mesa ya está ocupada');
             return;
         }
@@ -73,7 +73,7 @@ const Layout: React.FC = () => {
         if (table.id === selectedTable?.id) {
             return 'bg-premium-gold/30 border-premium-gold shadow-premium-gold';
         }
-        if (table.status === 'occupied') {
+        if (table.status === 'full' || table.status === 'blocked') {
             return 'bg-error/20 border-error/50';
         }
         return 'bg-success/20 border-success/50 hover:bg-success/30';
@@ -150,9 +150,13 @@ const Layout: React.FC = () => {
                             <button
                                 key={table.id}
                                 onClick={() => handleTableSelect(table)}
-                                disabled={submitting || (table.status === 'occupied' && table.id !== mySelection?.table?.id)}
+                                disabled={
+                                    submitting ||
+                                    ((table.status === 'full' || table.status === 'blocked') &&
+                                        table.id !== mySelection?.table_id)
+                                }
                                 className={`absolute w-16 h-16 rounded-full flex items-center justify-center transition-all ${getTableColor(table)
-                                    } ${table.status === 'occupied' && table.id !== mySelection?.table?.id
+                                    } ${(table.status === 'full' || table.status === 'blocked') && table.id !== mySelection?.table_id
                                         ? 'cursor-not-allowed opacity-50'
                                         : 'cursor-pointer hover:scale-110'
                                     }`}

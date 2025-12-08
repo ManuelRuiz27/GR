@@ -4,7 +4,7 @@ import { paymentsAPI } from '../services/paymentsAPI';
 import { layoutAPI } from '../services/layoutAPI';
 import { mealsAPI } from '../services/mealsAPI';
 import { thermoAPI } from '../services/thermoAPI';
-import api from '../services/api';
+import api, { graduateAPI } from '../services/api';
 import ProgressRing from '../components/ProgressRing';
 
 interface SummaryData {
@@ -58,19 +58,27 @@ const Summary: React.FC = () => {
         try {
             setLoading(true);
 
-            const [profileResp, paymentsResp, layoutResp, mealsResp, thermoResp] = await Promise.all([
-                api.get('/graduates/me'),
+            const profileResp = await api.get('/graduates/me');
+            const profile = profileResp.data;
+            const eventId = profile.event_id;
+
+            const [paymentsResp, layoutResp, mealsResp, thermoResp, guestsResp] = await Promise.all([
                 paymentsAPI.getSummary(),
-                layoutAPI.getMySelection(),
+                layoutAPI.getLayout(eventId),
                 mealsAPI.getMeals(),
                 thermoAPI.getStatus(),
+                graduateAPI.getGuests(),
             ]);
 
-            const profile = profileResp.data;
             const payments = paymentsResp.data;
             const layout = layoutResp.data;
             const meals = mealsResp.data;
             const thermo = thermoResp.data;
+            const guestsData = guestsResp.data;
+
+            const selectedTable = layout.my_selection
+                ? layout.tables?.find((t: any) => t.id === layout.my_selection.table_id)
+                : null;
 
             setData({
                 graduate: {
@@ -86,13 +94,15 @@ const Summary: React.FC = () => {
                     venue: profile.event?.venue || '',
                 },
                 tickets: {
-                    count: layout.guests_count || 0,
+                    count: guestsData.tickets_count || guestsData.guests?.length || 0,
                     total_amount: payments.total_amount,
                 },
-                table: layout.table ? {
-                    label: layout.table.label,
-                    capacity: layout.table.capacity,
-                } : null,
+                table: selectedTable
+                    ? {
+                        label: selectedTable.label,
+                        capacity: selectedTable.capacity,
+                    }
+                    : null,
                 guests: meals.guests || [],
                 payments: {
                     total_amount: payments.total_amount,

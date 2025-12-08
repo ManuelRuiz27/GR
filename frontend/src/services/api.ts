@@ -51,6 +51,15 @@ export const graduateAPI = {
     getDashboard: () => {
         return api.get('/graduates/me/dashboard');
     },
+    getGuests: () => {
+        return api.get('/graduates/me/guests');
+    },
+    addGuests: (data: { additional_guests: number }) => {
+        return api.post('/graduates/me/guests', data);
+    },
+    updateGuest: (guestId: string, data: { full_name?: string; meal_type?: string }) => {
+        return api.patch(`/graduates/me/guests/${guestId}`, data);
+    },
 };
 
 export default api;
