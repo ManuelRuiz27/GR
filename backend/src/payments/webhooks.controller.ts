@@ -11,7 +11,9 @@ import {
 import { Request } from 'express';
 import { PaymentsService } from './payments.service';
 import { OpenpayService } from './openpay.service';
+import { Public } from '../auth/public.decorator';
 
+@Public()
 @Controller('webhooks/openpay')
 export class WebhooksController {
     private readonly logger = new Logger(WebhooksController.name);
