@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
+import { safeGetItem, safeSetItem, safeRemoveItem } from '../lib/storage';
 
 interface User {
     id: string;
@@ -27,8 +28,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         // Check for existing token on mount
-        const savedToken = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
+        const savedToken = safeGetItem('token');
+        const savedUser = safeGetItem('user');
 
         if (savedToken && savedUser) {
             setToken(savedToken);
@@ -45,8 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setToken(newToken);
             setUser(graduate);
 
-            localStorage.setItem('token', newToken);
-            localStorage.setItem('user', JSON.stringify(graduate));
+            safeSetItem('token', newToken);
+            safeSetItem('user', JSON.stringify(graduate));
         } catch (error: any) {
             throw new Error(error.response?.data?.message || 'Error al iniciar sesión');
         }
@@ -60,8 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setToken(newToken);
             setUser(graduate);
 
-            localStorage.setItem('token', newToken);
-            localStorage.setItem('user', JSON.stringify(graduate));
+            safeSetItem('token', newToken);
+            safeSetItem('user', JSON.stringify(graduate));
         } catch (error: any) {
             throw new Error(error.response?.data?.message || 'Error al registrarse');
         }
@@ -70,8 +71,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = () => {
         setToken(null);
         setUser(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        safeRemoveItem('token');
+        safeRemoveItem('user');
     };
 
     return (

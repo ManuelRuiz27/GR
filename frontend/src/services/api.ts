@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { safeGetItem, safeRemoveItem } from '../lib/storage';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
@@ -10,7 +11,7 @@ const api = axios.create({
 // Request interceptor to add JWT token
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = safeGetItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -26,8 +27,8 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            safeRemoveItem('token');
+            safeRemoveItem('user');
             window.location.href = '/login';
         }
         return Promise.reject(error);

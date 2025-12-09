@@ -1,22 +1,52 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Openpay = require('openpay');
 
 @Injectable()
 export class OpenpayService {
     private readonly logger = new Logger(OpenpayService.name);
-    private openpay: any;
+    private readonly openpay: any;
+    private readonly merchantId: string;
+    private readonly privateKey: string;
+    private readonly publicKey: string;
+    private readonly isProduction: boolean;
 
-    constructor(private configService: ConfigService) {
-        const Openpay = require('openpay');
+    constructor(private readonly configService: ConfigService) {
+        this.merchantId =
+            this.configService.get<string>('OPENPAY_MERCHANT_ID') ?? '';
+        this.privateKey =
+            this.configService.get<string>('OPENPAY_PRIVATE_KEY') ?? '';
+        this.publicKey =
+            this.configService.get<string>('OPENPAY_PUBLIC_KEY') ?? '';
 
-        const merchantId = this.configService.get('OPENPAY_MERCHANT_ID');
-        const privateKey = this.configService.get('OPENPAY_PRIVATE_KEY');
-        const isProduction = this.configService.get('NODE_ENV') === 'production';
+        const rawMode =
+            this.configService.get<string>('OPENPAY_PRODUCTION_MODE') ??
+            'false';
+        this.isProduction = rawMode === 'true';
 
-        this.openpay = new Openpay(merchantId, privateKey, isProduction);
+        if (!this.merchantId || !this.privateKey) {
+            const message =
+                'OpenPay configuration error: OPENPAY_MERCHANT_ID and OPENPAY_PRIVATE_KEY must be defined';
+            this.logger.error(message);
+            throw new Error(message);
+        }
+
+        if (!this.publicKey) {
+            this.logger.warn(
+                'OPENPAY_PUBLIC_KEY is not defined; frontend may not be able to initialize OpenPay.js',
+            );
+        }
+
+        this.openpay = new Openpay(
+            this.merchantId,
+            this.privateKey,
+            this.isProduction,
+        );
 
         this.logger.log(
-            `OpenPay initialized in ${isProduction ? 'PRODUCTION' : 'SANDBOX'} mode`,
+            `OpenPay initialized in ${
+                this.isProduction ? 'PRODUCTION' : 'SANDBOX'
+            } mode with merchantId=${this.merchantId}`,
         );
     }
 
@@ -55,7 +85,9 @@ export class OpenpayService {
                 chargeRequest,
                 (error: any, body: any, response: any) => {
                     if (error) {
-                        this.logger.error('OpenPay charge error:', error);
+                        this.logger.error(
+                            `OpenPay charge error: http_code=${error?.http_code} error_code=${error?.error_code} description=${error?.description}`,
+                        );
                         reject(error);
                     } else {
                         this.logger.log(`Charge created successfully: ${body.id}`);
@@ -97,7 +129,9 @@ export class OpenpayService {
                 chargeRequest,
                 (error: any, body: any, response: any) => {
                     if (error) {
-                        this.logger.error('OpenPay bank charge error:', error);
+                        this.logger.error(
+                            `OpenPay bank charge error: http_code=${error?.http_code} error_code=${error?.error_code} description=${error?.description}`,
+                        );
                         reject(error);
                     } else {
                         this.logger.log(`Bank charge created: ${body.id}`);
@@ -139,7 +173,9 @@ export class OpenpayService {
                 chargeRequest,
                 (error: any, body: any, response: any) => {
                     if (error) {
-                        this.logger.error('OpenPay store charge error:', error);
+                        this.logger.error(
+                            `OpenPay store charge error: http_code=${error?.http_code} error_code=${error?.error_code} description=${error?.description}`,
+                        );
                         reject(error);
                     } else {
                         this.logger.log(`Store charge created: ${body.id}`);
@@ -159,7 +195,9 @@ export class OpenpayService {
                 chargeId,
                 (error: any, body: any, response: any) => {
                     if (error) {
-                        this.logger.error('OpenPay get charge error:', error);
+                        this.logger.error(
+                            `OpenPay get charge error: http_code=${error?.http_code} error_code=${error?.error_code} description=${error?.description}`,
+                        );
                         reject(error);
                     } else {
                         resolve(body);
@@ -174,10 +212,9 @@ export class OpenpayService {
      */
     verifyWebhookSignature(payload: string, signature: string): boolean {
         const crypto = require('crypto');
-        const privateKey = this.configService.get('OPENPAY_PRIVATE_KEY');
 
         const hash = crypto
-            .createHmac('sha256', privateKey)
+            .createHmac('sha256', this.privateKey)
             .update(payload)
             .digest('hex');
 
@@ -188,13 +225,14 @@ export class OpenpayService {
      * Obtiene la clave pública para el frontend
      */
     getPublicKey(): string {
-        return this.configService.get('OPENPAY_PUBLIC_KEY');
+        return this.publicKey;
     }
 
     /**
      * Obtiene el merchant ID para el frontend
      */
     getMerchantId(): string {
-        return this.configService.get('OPENPAY_MERCHANT_ID');
+        return this.merchantId;
     }
 }
+

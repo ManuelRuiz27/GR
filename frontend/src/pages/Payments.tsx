@@ -71,19 +71,16 @@ const Payments: React.FC = () => {
 
     const initializeOpenPay = async () => {
         try {
-            const configResponse = await paymentsAPI.getConfig();
-            const { merchant_id, public_key } = configResponse.data;
+            const { initOpenPay, setupOpenPayDeviceData } = await import('../lib/openpayClient');
+            const openpay = initOpenPay();
+            const deviceSessionId = setupOpenPayDeviceData(openpay);
 
-            if (window.OpenPay) {
-                window.OpenPay.setId(merchant_id);
-                window.OpenPay.setApiKey(public_key);
-                window.OpenPay.setSandboxMode(true);
-
-                // Generate device session ID for fraud prevention
-                const deviceSessionId = window.OpenPay.deviceData.setup();
+            if (deviceSessionId) {
                 console.log('OpenPay initialized with device session:', deviceSessionId);
             } else {
-                console.error('OpenPay SDK not loaded. Please reload the page.');
+                console.log(
+                    'OpenPay initialized without device session id (deviceData.setup not available)',
+                );
             }
         } catch (err) {
             console.error('Error initializing OpenPay:', err);
